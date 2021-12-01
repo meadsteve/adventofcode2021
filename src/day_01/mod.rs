@@ -34,18 +34,14 @@ fn number_of_increases(depths: Vec<isize>) -> usize {
 }
 
 fn to_triplet_sums(depths: Vec<isize>) -> Vec<isize> {
-    let mut results = vec![];
-    let mut firsts = depths.iter();
-    let mut seconds = depths.iter().skip(1);
+    let firsts = depths.iter();
+    let seconds = depths.iter().skip(1);
     let thirds = depths.iter().skip(2);
-    for third in thirds {
-        if let Some(second) = seconds.next() {
-            if let Some(first) = firsts.next() {
-                results.push(*first + *second + *third);
-            }
-        }
-    }
-    results
+    thirds
+        .zip(seconds)
+        .zip(firsts)
+        .map(|((x, y), z)| *x + *y + *z)
+        .collect()
 }
 
 #[cfg(test)]
