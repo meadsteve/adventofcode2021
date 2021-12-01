@@ -3,7 +3,7 @@ use adventofcode2021::day_01::DayOne;
 use adventofcode2021::AdventDay;
 use test_case::test_case;
 
-#[test_case(Box::new(DayOne()), Some("depth increases: 1316"), None; "day one")]
+#[test_case(Box::new(DayOne()), Some("depth increases: 1316"), Some("triplet increases: 1344"); "day one")]
 fn test_the_days(
     solution: Box<dyn AdventDay>,
     day_one_sol: Option<&str>,

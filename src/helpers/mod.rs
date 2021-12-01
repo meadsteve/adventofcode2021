@@ -9,7 +9,7 @@ impl DayData {
     }
 
     pub fn lines(&self) -> DayDataLineIterator {
-        DayDataLineIterator::new(&self)
+        DayDataLineIterator::new(self)
     }
 }
 
