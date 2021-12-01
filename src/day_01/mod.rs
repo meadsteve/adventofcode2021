@@ -5,18 +5,24 @@ pub struct DayOne();
 
 impl AdventDay for DayOne {
     fn run_part_one(&self) -> String {
-        let data = DayData::from_file_path("./data/day01.txt");
-        let depths: Vec<isize> = data.lines().map(|x| x.parse::<isize>().unwrap()).collect();
+        let depths = DayOne::depth_data();
         let answer = number_of_increases(depths);
         format!("depth increases: {}", answer)
     }
 
     fn run_part_two(&self) -> String {
-        let data = DayData::from_file_path("./data/day01.txt");
-        let depths: Vec<isize> = data.lines().map(|x| x.parse::<isize>().unwrap()).collect();
+        let depths = DayOne::depth_data();
         let triplets = to_triplet_sums(depths);
         let answer = number_of_increases(triplets);
         format!("triplet increases: {}", answer)
+    }
+}
+
+impl DayOne {
+    fn depth_data() -> Vec<isize> {
+        let data = DayData::from_file_path("./data/day01.txt");
+        let depths: Vec<isize> = data.lines().map(|x| x.parse::<isize>().unwrap()).collect();
+        depths
     }
 }
 
