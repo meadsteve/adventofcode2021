@@ -21,7 +21,13 @@ impl AdventDay for DayOne {
 impl DayOne {
     fn depth_data() -> Vec<isize> {
         let data = DayData::from_file_path("./data/day01.txt");
-        let depths: Vec<isize> = data.lines().map(|x| x.parse::<isize>().unwrap()).collect();
+        let depths: Vec<isize> = data
+            .lines()
+            .map(|x| {
+                x.parse::<isize>()
+                    .expect("All of the depths should have been numbers")
+            })
+            .collect();
         depths
     }
 }
