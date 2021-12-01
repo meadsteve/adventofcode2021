@@ -21,16 +21,12 @@ impl AdventDay for DayOne {
 }
 
 fn number_of_increases(depths: Vec<isize>) -> usize {
-    let mut result = 0;
-    let mut iter = depths.iter().peekable();
-    while let Some(current) = iter.next() {
-        if let Some(next) = iter.peek() {
-            if next > &current {
-                result += 1;
-            }
-        }
-    }
-    result
+    let firsts = depths.iter();
+    let seconds = depths.iter().skip(1);
+    seconds
+        .zip(firsts)
+        .filter(|(second, first)| second > first)
+        .count()
 }
 
 fn to_triplet_sums(depths: Vec<isize>) -> Vec<isize> {
