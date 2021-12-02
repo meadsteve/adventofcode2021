@@ -1,10 +1,12 @@
 pub mod day_01;
+pub mod day_02;
 mod helpers;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
 pub use crate::day_01::DayOne;
+use crate::day_02::DayTwo;
 use std::str::FromStr;
 use structopt::StructOpt;
 
@@ -54,6 +56,7 @@ pub fn run(args: &CliArgs, mut writer: impl std::io::Write) -> Result<(), Box<dy
 
     let solution: &(dyn AdventDay) = match args.day {
         1 => &DayOne(),
+        2 => &DayTwo(),
         _ => {
             return Err(Box::new(UnimplementedSolutionError(
                 "That day has not been done".to_string(),
