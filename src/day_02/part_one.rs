@@ -6,6 +6,13 @@ pub struct Position {
 }
 
 impl Position {
+    pub fn new() -> Self {
+        Self {
+            horizontal: 0,
+            depth: 0,
+        }
+    }
+
     pub fn apply_move(&self, sub_move: &Move) -> Position {
         match sub_move {
             Move::Forward(x) => Position {

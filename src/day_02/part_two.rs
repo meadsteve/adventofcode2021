@@ -7,6 +7,14 @@ pub struct PositionAndAim {
 }
 
 impl PositionAndAim {
+    pub fn new() -> Self {
+        Self {
+            horizontal: 0,
+            depth: 0,
+            aim: 0,
+        }
+    }
+
     pub fn apply_move(&self, sub_move: &Move) -> Self {
         match sub_move {
             Move::Forward(x) => Self {

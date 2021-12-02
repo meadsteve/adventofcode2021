@@ -18,13 +18,11 @@ pub struct DayTwo();
 
 impl AdventDay for DayTwo {
     fn run_part_one(&self) -> String {
-        let final_position = DayTwo::move_data().iter().fold(
-            Position {
-                horizontal: 0,
-                depth: 0,
-            },
-            |position, sub_move| position.apply_move(sub_move),
-        );
+        let final_position = DayTwo::move_data()
+            .iter()
+            .fold(Position::new(), |position, sub_move| {
+                position.apply_move(sub_move)
+            });
         format!(
             "result: {}",
             final_position.horizontal * final_position.depth
@@ -32,14 +30,11 @@ impl AdventDay for DayTwo {
     }
 
     fn run_part_two(&self) -> String {
-        let final_position = DayTwo::move_data().iter().fold(
-            PositionAndAim {
-                horizontal: 0,
-                depth: 0,
-                aim: 0,
-            },
-            |position, sub_move| position.apply_move(sub_move),
-        );
+        let final_position = DayTwo::move_data()
+            .iter()
+            .fold(PositionAndAim::new(), |position, sub_move| {
+                position.apply_move(sub_move)
+            });
         format!(
             "result: {}",
             final_position.horizontal * final_position.depth
