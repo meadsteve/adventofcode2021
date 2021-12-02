@@ -1,13 +1,18 @@
 use std::error;
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::Debug;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
+use part_one::Position;
+
 use crate::day_02::errors::ParseSubmarineCommandsError;
+use crate::day_02::part_two::PositionAndAim;
 use crate::helpers::DayData;
 use crate::AdventDay;
 
 mod errors;
+mod part_one;
+mod part_two;
 
 pub struct DayTwo();
 
@@ -27,7 +32,18 @@ impl AdventDay for DayTwo {
     }
 
     fn run_part_two(&self) -> String {
-        todo!()
+        let final_position = DayTwo::move_data().iter().fold(
+            PositionAndAim {
+                horizontal: 0,
+                depth: 0,
+                aim: 0,
+            },
+            |position, sub_move| position.apply_move(sub_move),
+        );
+        format!(
+            "result: {}",
+            final_position.horizontal * final_position.depth
+        )
     }
 }
 
@@ -40,32 +56,8 @@ impl DayTwo {
     }
 }
 
-struct Position {
-    horizontal: isize,
-    depth: isize,
-}
-
-impl Position {
-    fn apply_move(&self, sub_move: &Move) -> Position {
-        match sub_move {
-            Move::Forward(x) => Position {
-                horizontal: (self.horizontal + x),
-                ..*self
-            },
-            Move::Up(x) => Position {
-                depth: self.depth - x,
-                ..*self
-            },
-            Move::Down(x) => Position {
-                depth: self.depth + x,
-                ..*self
-            },
-        }
-    }
-}
-
 #[derive(PartialEq, Debug)]
-enum Move {
+pub enum Move {
     Forward(isize),
     Down(isize),
     Up(isize),
