@@ -5,6 +5,7 @@ use crate::AdventDay;
 
 mod bit_counter;
 mod multibit_counter;
+mod ratings;
 
 pub struct DayThree();
 
@@ -20,7 +21,12 @@ impl AdventDay for DayThree {
     }
 
     fn run_part_two(&self) -> String {
-        todo!()
+        let data = DayData::from_file_path("./data/day03.txt");
+        let oxygen_rating = ratings::find_oxygen_rating(data.lines().collect());
+        let scrubber = ratings::find_scrubber_rating(data.lines().collect());
+        let answer = usize::from_str_radix(&oxygen_rating, 2).unwrap()
+            * usize::from_str_radix(&scrubber, 2).unwrap();
+        format!("Weird thingy: {}", answer)
     }
 }
 
