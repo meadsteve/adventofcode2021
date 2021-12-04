@@ -1,15 +1,18 @@
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
+pub mod day_04;
 
 mod helpers;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-pub use crate::day_01::DayOne;
+use crate::day_01::DayOne;
 use crate::day_02::DayTwo;
 use crate::day_03::DayThree;
+use crate::day_04::DayFour;
+
 use std::str::FromStr;
 use structopt::StructOpt;
 
@@ -61,6 +64,7 @@ pub fn run(args: &CliArgs, mut writer: impl std::io::Write) -> Result<(), Box<dy
         1 => &DayOne(),
         2 => &DayTwo(),
         3 => &DayThree(),
+        4 => &DayFour(),
         _ => {
             return Err(Box::new(UnimplementedSolutionError(
                 "That day has not been done".to_string(),
