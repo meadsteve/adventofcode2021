@@ -69,6 +69,7 @@ struct MultiBitCounter<const SIZE: usize> {
     bit_counters: [BitCounter; SIZE],
 }
 
+#[allow(dead_code)]
 impl MultiBitCounter<5> {
     fn new() -> Self {
         let counters: [BitCounter; 5] = Default::default();
