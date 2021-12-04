@@ -13,7 +13,10 @@ impl AdventDay for DayFour {
     }
 
     fn run_part_two(&self) -> String {
-        todo!()
+        let data = DayData::from_file_path("./data/day04.txt");
+        let mut game = parse_input(data.lines());
+        let (last_call, last_winner) = game.find_last_winner();
+        format!("Thingy: {}", last_winner.unmarked_sum() * last_call)
     }
 }
 
@@ -64,6 +67,23 @@ impl GameSet {
                 if card.is_winner() {
                     return (*number, card.clone());
                 }
+            }
+        }
+        panic!("We assumed there'd always be a winner")
+    }
+
+    fn find_last_winner(&mut self) -> (usize, BingoCard) {
+        let mut cards: Vec<BingoCard> = self.cards.to_vec();
+        for number in &self.numbers_to_call {
+            for card in &mut cards {
+                card.mark(*number);
+            }
+            if cards.len() == 1 {
+                if cards[0].is_winner() {
+                    return (*number, cards.pop().unwrap());
+                }
+            } else {
+                cards = cards.iter().filter(|c| !c.is_winner()).cloned().collect();
             }
         }
         panic!("We assumed there'd always be a winner")
