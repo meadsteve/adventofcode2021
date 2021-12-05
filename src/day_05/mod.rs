@@ -1,6 +1,5 @@
 use crate::helpers::DayData;
 use crate::AdventDay;
-use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::num::ParseIntError;
 use std::str::FromStr;
@@ -14,22 +13,33 @@ impl AdventDay for DayFive {
     }
 
     fn run_part_two(&self) -> String {
-        todo!()
+        let overlaps = solve_part_two(DayData::from_file_path("./data/day05.txt").lines());
+        format!("overlaps: {}", overlaps)
     }
 }
 
 fn solve_part_one<I: IntoIterator<Item = String>>(lines: I) -> usize {
-    lines_into_a_crossover_map(lines)
+    lines_into_a_crossover_map(
+        lines
+            .into_iter()
+            .map(|l| l.parse::<Line>().unwrap())
+            .filter(|l| !l.is_diag()),
+    )
+    .iter()
+    .filter(|(_, count)| **count > 1)
+    .count()
+}
+
+fn solve_part_two<I: IntoIterator<Item = String>>(lines: I) -> usize {
+    lines_into_a_crossover_map(lines.into_iter().map(|l| l.parse::<Line>().unwrap()))
         .iter()
         .filter(|(_, count)| **count > 1)
         .count()
 }
 
-fn lines_into_a_crossover_map<I: IntoIterator<Item = String>>(lines: I) -> HashMap<Point, usize> {
+fn lines_into_a_crossover_map<I: IntoIterator<Item = Line>>(lines: I) -> HashMap<Point, usize> {
     lines
         .into_iter()
-        .map(|l| l.parse::<Line>().unwrap())
-        .filter(|l| !l.is_diag())
         .flat_map(|l| l.points())
         .fold(HashMap::new(), |mut counts, point| {
             let total = counts.entry(point).or_insert(0);
@@ -42,6 +52,22 @@ fn lines_into_a_crossover_map<I: IntoIterator<Item = String>>(lines: I) -> HashM
 struct Point {
     x: usize,
     y: usize,
+}
+
+#[derive(Debug, Copy, Clone)]
+struct Vector {
+    x: isize,
+    y: isize,
+}
+
+impl Point {
+    fn add_vector(self, vector: Vector) -> Point {
+        // Lets pretend this can never go below zero
+        Point {
+            x: (self.x as isize + vector.x) as usize,
+            y: (self.y as isize + vector.y) as usize,
+        }
+    }
 }
 
 impl FromStr for Point {
@@ -71,17 +97,16 @@ impl Line {
 
     fn points(&self) -> Vec<Point> {
         let mut points = Vec::new();
-        if self.start.x == self.end.x {
-            for y in min(self.start.y, self.end.y)..=max(self.start.y, self.end.y) {
-                points.push(Point { x: self.start.x, y })
-            }
-        } else if self.start.y == self.end.y {
-            for x in min(self.start.x, self.end.x)..=max(self.start.x, self.end.x) {
-                points.push(Point { y: self.start.y, x })
-            }
-        } else {
-            panic!("Diaganol")
+        let mut point = self.start;
+        let vector = Vector {
+            x: direction(self.start.x, self.end.x),
+            y: direction(self.start.y, self.end.y),
+        };
+        while point != self.end {
+            points.push(point);
+            point = point.add_vector(vector);
         }
+        points.push(self.end);
         points
     }
 }
@@ -97,6 +122,15 @@ impl FromStr for Line {
             }),
             _ => panic!("aaaah"),
         }
+    }
+}
+
+fn direction(start: usize, end: usize) -> isize {
+    if start == end {
+        0
+    } else {
+        let diff = end as isize - start as isize;
+        diff / diff.abs()
     }
 }
 
@@ -140,15 +174,47 @@ mod tests {
         assert_eq!(
             line.points(),
             vec![
-                Point { x: 3, y: 7 },
+                Point { x: 3, y: 9 },
                 Point { x: 3, y: 8 },
-                Point { x: 3, y: 9 }
+                Point { x: 3, y: 7 }
             ]
         );
     }
+
     #[test]
-    fn test_part_one() {
-        let input = "0,9 -> 5,9
+    fn a_diagonal_line_can_make_points_too() {
+        let line = Line {
+            start: Point { x: 1, y: 1 },
+            end: Point { x: 3, y: 3 },
+        };
+        assert_eq!(
+            line.points(),
+            vec![
+                Point { x: 1, y: 1 },
+                Point { x: 2, y: 2 },
+                Point { x: 3, y: 3 }
+            ]
+        );
+    }
+
+    #[test]
+    fn another_diagonal_line_can_make_points_too() {
+        let line = Line {
+            start: Point { x: 9, y: 7 },
+            end: Point { x: 7, y: 9 },
+        };
+        assert_eq!(
+            line.points(),
+            vec![
+                Point { x: 9, y: 7 },
+                Point { x: 8, y: 8 },
+                Point { x: 7, y: 9 }
+            ]
+        );
+    }
+
+    fn input_for_tests() -> String {
+        "0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
 2,2 -> 2,1
@@ -157,8 +223,19 @@ mod tests {
 0,9 -> 2,9
 3,4 -> 1,4
 0,0 -> 8,8
-5,5 -> 8,2";
-        let result = solve_part_one(input.lines().map(|x| x.to_string()));
+5,5 -> 8,2"
+            .to_string()
+    }
+
+    #[test]
+    fn test_part_one() {
+        let result = solve_part_one(input_for_tests().lines().map(|x| x.to_string()));
         assert_eq!(result, 5);
+    }
+
+    #[test]
+    fn test_part_two() {
+        let result = solve_part_two(input_for_tests().lines().map(|x| x.to_string()));
+        assert_eq!(result, 12);
     }
 }
