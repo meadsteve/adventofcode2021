@@ -8,31 +8,48 @@ pub struct DaySeven();
 
 impl AdventDay for DaySeven {
     fn run_part_one(&self) -> String {
-        let crabs: Vec<Crab> = DayData::from_file_path("./data/day07.txt")
+        let crabs = DaySeven::craaaabs();
+        format!(
+            "GOTO {}",
+            lowest_fuel_move(&crabs, basic_fuel_cost).fuel_cost
+        )
+    }
+
+    fn run_part_two(&self) -> String {
+        let crabs = DaySeven::craaaabs();
+        format!(
+            "GOTO {}",
+            lowest_fuel_move(&crabs, triangular_fuel_cost).fuel_cost
+        )
+    }
+}
+
+impl DaySeven {
+    fn craaaabs() -> Vec<Crab> {
+        DayData::from_file_path("./data/day07.txt")
             .lines()
             .next()
             .unwrap()
             .split(',')
             .map(|f| f.parse().unwrap())
-            .collect();
-        format!("GOTO {}", lowest_fuel_move(&crabs).fuel_cost)
-    }
-
-    fn run_part_two(&self) -> String {
-        todo!()
+            .collect()
     }
 }
 
-fn fuel_cost(crabs: &[Crab], target: u64) -> u64 {
+fn basic_fuel_cost(crabs: &[Crab], target: u64) -> u64 {
     crabs.iter().map(|c| c.fuel_cost(target)).sum()
 }
 
-fn lowest_fuel_move(crabs: &[Crab]) -> Move {
+fn triangular_fuel_cost(crabs: &[Crab], target: u64) -> u64 {
+    crabs.iter().map(|c| c.triangular_fuel_cost(target)).sum()
+}
+
+fn lowest_fuel_move(crabs: &[Crab], fuel_func: fn(&[Crab], u64) -> u64) -> Move {
     let lowest = crabs.iter().min().unwrap().position();
     let highest = crabs.iter().max().unwrap().position();
     (lowest..=highest)
         .map(|target| Move {
-            fuel_cost: fuel_cost(crabs, target),
+            fuel_cost: fuel_func(crabs, target),
             target,
         })
         .min()
@@ -65,6 +82,17 @@ impl Crab {
         (self.0 as i64 - target as i64).abs() as u64
     }
 
+    fn triangular_fuel_cost(&self, target: u64) -> u64 {
+        let steps = (self.0 as i64 - target as i64).abs() as u64;
+        let mut fuel_cost = 0;
+        let mut step_cost = 1;
+        for _ in 0..steps {
+            fuel_cost += step_cost;
+            step_cost += 1;
+        }
+        fuel_cost
+    }
+
     fn position(&self) -> u64 {
         self.0
     }
@@ -88,7 +116,7 @@ mod tests {
             .split(',')
             .map(|i| i.parse::<Crab>().unwrap())
             .collect();
-        assert_eq!(fuel_cost(&crabs, 2), 37);
+        assert_eq!(basic_fuel_cost(&crabs, 2), 37);
     }
 
     #[test]
@@ -97,7 +125,7 @@ mod tests {
             .split(',')
             .map(|i| i.parse::<Crab>().unwrap())
             .collect();
-        let best_move = lowest_fuel_move(&crabs);
+        let best_move = lowest_fuel_move(&crabs, basic_fuel_cost);
         assert_eq!(best_move.fuel_cost, 37);
         assert_eq!(best_move.target, 2);
     }
