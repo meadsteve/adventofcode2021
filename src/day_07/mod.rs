@@ -27,12 +27,7 @@ impl AdventDay for DaySeven {
 impl DaySeven {
     fn craaaabs() -> Vec<Crab> {
         DayData::from_file_path("./data/day07.txt")
-            .lines()
-            .next()
-            .unwrap()
-            .split(',')
-            .map(|f| f.parse().unwrap())
-            .collect()
+            .parse_comma_separated_parts(|f| f.parse().unwrap())
     }
 }
 

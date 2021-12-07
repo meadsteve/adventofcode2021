@@ -3,13 +3,21 @@ use std::io::{BufRead, BufReader, Lines};
 
 pub struct DayData(String);
 
-impl DayData {
+impl<'a> DayData {
     pub fn from_file_path(path: &str) -> DayData {
         DayData(path.to_string())
     }
 
     pub fn lines(&self) -> DayDataLineIterator {
         DayDataLineIterator::new(self)
+    }
+
+    pub fn parse_comma_separated_parts<T>(&self, parse: fn(&str) -> T) -> Vec<T> {
+        let first_line = self
+            .lines()
+            .next()
+            .expect("The file should have one comma separated line");
+        first_line.split(',').map(|i| parse(i)).collect()
     }
 }
 

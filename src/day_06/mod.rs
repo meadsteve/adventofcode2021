@@ -7,11 +7,8 @@ pub struct DaySix();
 
 impl AdventDay for DaySix {
     fn run_part_one(&self) -> String {
-        let input = DayData::from_file_path("./data/day06.txt")
-            .lines()
-            .next()
-            .unwrap();
-        let mut fishes: Vec<LanternFish> = input.split(',').map(|f| f.parse().unwrap()).collect();
+        let mut fishes: Vec<LanternFish> = DayData::from_file_path("./data/day06.txt")
+            .parse_comma_separated_parts(|f| f.parse().unwrap());
         for _day in 0..80 {
             fishes = a_day_passes_for_the_school(fishes);
         }
