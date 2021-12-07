@@ -19,6 +19,8 @@ impl AdventDay for DaySix {
     }
 
     fn run_part_two(&self) -> String {
+        // TODO: build numbers based on population age and just use that rather than
+        // simulating each fish
         todo!()
     }
 }
