@@ -5,10 +5,13 @@ pub mod day_04;
 pub mod day_05;
 pub mod day_06;
 pub mod day_07;
+pub mod day_10;
 mod helpers;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
+use std::str::FromStr;
+use structopt::StructOpt;
 
 use crate::day_01::DayOne;
 use crate::day_02::DayTwo;
@@ -17,8 +20,7 @@ use crate::day_04::DayFour;
 use crate::day_05::DayFive;
 use crate::day_06::DaySix;
 use crate::day_07::DaySeven;
-use std::str::FromStr;
-use structopt::StructOpt;
+use crate::day_10::DayTen;
 
 pub trait AdventDay {
     fn run_part_one(&self) -> String;
@@ -72,6 +74,8 @@ pub fn run(args: &CliArgs, mut writer: impl std::io::Write) -> Result<(), Box<dy
         5 => &DayFive(),
         6 => &DaySix(),
         7 => &DaySeven(),
+        // TODO: some days I missed
+        10 => &DayTen(),
         _ => {
             return Err(Box::new(UnimplementedSolutionError(
                 "That day has not been done".to_string(),

@@ -5,6 +5,7 @@ use adventofcode2021::day_04::DayFour;
 use adventofcode2021::day_05::DayFive;
 use adventofcode2021::day_06::DaySix;
 use adventofcode2021::day_07::DaySeven;
+use adventofcode2021::day_10::DayTen;
 
 use adventofcode2021::AdventDay;
 use test_case::test_case;
@@ -16,6 +17,7 @@ use test_case::test_case;
 #[test_case(Box::new(DayFive()), Some("overlaps: 6007"), Some("overlaps: 19349"); "day five")]
 #[test_case(Box::new(DaySix()), Some("Fish count: 387413"), None; "day six")]
 #[test_case(Box::new(DaySeven()), Some("GOTO 337488"), None; "day seven")]
+#[test_case(Box::new(DayTen()), Some("Score: 366027"), None; "day ten")]
 fn test_the_days(
     solution: Box<dyn AdventDay>,
     day_one_sol: Option<&str>,
