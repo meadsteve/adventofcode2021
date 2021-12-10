@@ -7,14 +7,27 @@ impl AdventDay for DayTen {
     fn run_part_one(&self) -> String {
         let score: usize = DayData::from_file_path("./data/day10.txt")
             .lines()
-            .map(|s| valid_line(&s))
-            .map(|r| r.to_points())
+            .map(|s| validate_line(&s))
+            .map(|r| r.to_mistake_points())
             .sum();
         format!("Score: {}", score)
     }
 
     fn run_part_two(&self) -> String {
-        todo!()
+        let mut all_scores: Vec<usize> = DayData::from_file_path("./data/day10.txt")
+            .lines()
+            .map(|s| validate_line(&s))
+            .filter(|r| !matches!(r, LineCheckResult::InvalidLine(_)))
+            .map(|r| r.to_autocomplete_points())
+            .collect();
+        all_scores.sort_unstable();
+        println!(
+            "total: {}, midpoint: {}",
+            all_scores.len(),
+            all_scores.len() / 2
+        );
+        let score = all_scores.get(all_scores.len() / 2).unwrap();
+        format!("Score: {}", score)
     }
 }
 
@@ -49,7 +62,24 @@ enum OpenCloseResult {
     Bad(BracketMistake),
 }
 
+#[derive(Debug, PartialEq)]
 struct BracketStack(Vec<Bracket>);
+
+impl BracketStack {
+    fn to_points(&self) -> usize {
+        let mut score = 0;
+        for i in self.0.iter().rev() {
+            score *= 5;
+            score += match i {
+                Bracket::Round => 1,
+                Bracket::Square => 2,
+                Bracket::Squirrely => 3,
+                Bracket::Triangular => 4,
+            }
+        }
+        score
+    }
+}
 
 impl BracketStack {
     fn new() -> BracketStack {
@@ -75,20 +105,27 @@ impl BracketStack {
 
 #[derive(Debug, PartialEq)]
 enum LineCheckResult {
-    Ok,
+    Ok { remaining: BracketStack },
     InvalidLine(BracketMistake),
 }
 
 impl LineCheckResult {
-    fn to_points(&self) -> usize {
+    fn to_mistake_points(&self) -> usize {
         match &self {
-            Self::Ok => 0,
+            Self::Ok { remaining: _ } => 0,
             Self::InvalidLine(mistake) => mistake.to_points(),
+        }
+    }
+
+    fn to_autocomplete_points(&self) -> usize {
+        match &self {
+            Self::Ok { remaining: stack } => stack.to_points(),
+            Self::InvalidLine(_) => 0,
         }
     }
 }
 
-fn valid_line(line: &str) -> LineCheckResult {
+fn validate_line(line: &str) -> LineCheckResult {
     let mut stack = BracketStack::new();
     for c in line.chars() {
         let result = match c {
@@ -106,7 +143,7 @@ fn valid_line(line: &str) -> LineCheckResult {
             return LineCheckResult::InvalidLine(mistake);
         }
     }
-    LineCheckResult::Ok
+    LineCheckResult::Ok { remaining: stack }
 }
 
 #[cfg(test)]
@@ -115,9 +152,12 @@ mod tests {
 
     #[test]
     fn it_checks_for_balanced_lines() {
-        assert_eq!(valid_line("()"), LineCheckResult::Ok);
-        assert_eq!(valid_line("[<>({}){}[([])<>]]"), LineCheckResult::Ok);
-        assert_eq!(valid_line("{()()()}"), LineCheckResult::Ok);
+        let success = LineCheckResult::Ok {
+            remaining: BracketStack::new(),
+        };
+        assert_eq!(validate_line("()"), success);
+        assert_eq!(validate_line("[<>({}){}[([])<>]]"), success);
+        assert_eq!(validate_line("{()()()}"), success);
     }
 
     #[test]
@@ -126,6 +166,36 @@ mod tests {
             expected: Bracket::Square,
             got: Bracket::Squirrely,
         });
-        assert_eq!(valid_line("{([(<{}[<>[]}>{[]{[(<()>"), expected);
+        assert_eq!(validate_line("{([(<{}[<>[]}>{[]{[(<()>"), expected);
+    }
+
+    #[test]
+    fn it_scores_incomplete_lines() {
+        assert_eq!(validate_line("()").to_autocomplete_points(), 0);
+        assert_eq!(
+            validate_line("{([(<{}[<>[]}>{[]{[(<()>").to_autocomplete_points(),
+            0
+        );
+        assert_eq!(
+            validate_line("[({(<(())[]>[[{[]{<()<>>").to_autocomplete_points(),
+            288957
+        );
+        assert_eq!(
+            validate_line("<{([{{}}[<[[[<>{}]]]>[]]").to_autocomplete_points(),
+            294
+        );
+
+        assert_eq!(
+            validate_line("{<[[]]>}<{[{[{[]{()[[[]").to_autocomplete_points(),
+            995444
+        );
+        assert_eq!(
+            validate_line("[(()[<>])]({[<{<<[]>>(").to_autocomplete_points(),
+            5566
+        );
+        assert_eq!(
+            validate_line("(((({<>}<{<{<>}{[]{[]{}").to_autocomplete_points(),
+            1480781
+        );
     }
 }
