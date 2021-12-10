@@ -16,7 +16,7 @@ use test_case::test_case;
 #[test_case(Box::new(DayFour()), Some("Thingy: 23177"), Some("Thingy: 6804"); "day four")]
 #[test_case(Box::new(DayFive()), Some("overlaps: 6007"), Some("overlaps: 19349"); "day five")]
 #[test_case(Box::new(DaySix()), Some("Fish count: 387413"), None; "day six")]
-#[test_case(Box::new(DaySeven()), Some("GOTO 337488"), None; "day seven")]
+#[test_case(Box::new(DaySeven()), Some("GOTO 337488"), Some("GOTO 89647695"); "day seven")]
 #[test_case(Box::new(DayTen()), Some("Score: 366027"), None; "day ten")]
 fn test_the_days(
     solution: Box<dyn AdventDay>,
