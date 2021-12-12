@@ -16,7 +16,17 @@ impl AdventDay for DayEleven {
     }
 
     fn run_part_two(&self) -> String {
-        todo!()
+        let data = DayData::from_file_path("./data/day11.txt");
+        let lines = data.lines();
+        let mut ocotopopulation = DayEleven::cave_from_lines(lines);
+        let mut day = 1;
+        loop {
+            match ocotopopulation.run_day() {
+                100 => break,
+                _ => day += 1,
+            };
+        }
+        format!("Days until megaflash: {}", day)
     }
 }
 
@@ -124,13 +134,15 @@ impl Cave {
         self.octopii.insert(pos, oct);
     }
 
-    pub fn run_day(&mut self) {
+    pub fn run_day(&mut self) -> usize {
         self.energize_day();
+        let daily_flash_count = self.octopii.iter().filter(|(_, o)| o.has_pulsed).count();
         self.octopii = self
             .octopii
             .iter()
             .map(|(pos, oct)| (*pos, oct.end_of_day()))
             .collect();
+        daily_flash_count
     }
 
     fn energize_day(&mut self) {

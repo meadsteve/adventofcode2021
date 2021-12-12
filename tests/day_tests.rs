@@ -19,7 +19,7 @@ use test_case::test_case;
 #[test_case(Box::new(DaySix()), Some("Fish count: 387413"), None; "day six")]
 #[test_case(Box::new(DaySeven()), Some("GOTO 337488"), Some("GOTO 89647695"); "day seven")]
 #[test_case(Box::new(DayTen()), Some("Score: 366027"), Some("Score: 1118645287"); "day ten")]
-#[test_case(Box::new(DayEleven()), Some("flashes: 1632"), None; "day eleven")]
+#[test_case(Box::new(DayEleven()), Some("flashes: 1632"), Some("Days until megaflash: 303"); "day eleven")]
 fn test_the_days(
     solution: Box<dyn AdventDay>,
     day_one_sol: Option<&str>,
