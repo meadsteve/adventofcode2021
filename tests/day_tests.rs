@@ -19,7 +19,7 @@ use test_case::test_case;
 #[test_case(Box::new(DayFive()), Some("overlaps: 6007"), Some("overlaps: 19349"); "day five")]
 #[test_case(Box::new(DaySix()), Some("Fish count: 387413"), None; "day six")]
 #[test_case(Box::new(DaySeven()), Some("GOTO 337488"), Some("GOTO 89647695"); "day seven")]
-#[test_case(Box::new(DayNine()), Some("lowpoint score: 425"), None; "day nine")]
+#[test_case(Box::new(DayNine()), Some("lowpoint score: 425"), Some("basin score: 1135260"); "day nine")]
 #[test_case(Box::new(DayTen()), Some("Score: 366027"), Some("Score: 1118645287"); "day ten")]
 #[test_case(Box::new(DayEleven()), Some("flashes: 1632"), Some("Days until megaflash: 303"); "day eleven")]
 fn test_the_days(

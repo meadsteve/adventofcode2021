@@ -1,6 +1,6 @@
 use crate::helpers::DayData;
 use crate::AdventDay;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 pub struct DayNine();
 
@@ -12,7 +12,9 @@ impl AdventDay for DayNine {
     }
 
     fn run_part_two(&self) -> String {
-        todo!()
+        let data = DayData::from_file_path("./data/day09.txt");
+        let map = DayNine::heightmap_from_lines(data.lines());
+        format!("basin score: {}", DayNine::score_basins(&map))
     }
 }
 
@@ -30,6 +32,17 @@ impl DayNine {
 
     fn score_lowpoints(map: &HeightMap) -> usize {
         map.lowpoints().iter().map(|d| d.height.0 + 1).sum()
+    }
+
+    fn score_basins(map: &HeightMap) -> usize {
+        let mut basin_sizes: Vec<usize> = map
+            .lowpoints()
+            .iter()
+            .map(|d| 1 + map.points_around_lowpoint(&d.pos).len())
+            .collect();
+        basin_sizes.sort_unstable();
+        basin_sizes.reverse();
+        basin_sizes[0] * basin_sizes[1] * basin_sizes[2]
     }
 }
 
@@ -91,6 +104,30 @@ impl HeightMap {
             .collect()
     }
 
+    fn points_around_lowpoint(&self, start: &Position) -> HashSet<Position> {
+        let local_height = self.0.get(start).unwrap();
+        let neighbours = start.neighbours();
+        let next_points: HashSet<Position> = neighbours
+            .iter()
+            .filter(|&p| {
+                if let Some(height) = self.0.get(p) {
+                    height > local_height && height.0 != 9
+                } else {
+                    false
+                }
+            })
+            .cloned()
+            .collect();
+        let mut all_points: HashSet<Position> = next_points
+            .iter()
+            .flat_map(|p| self.points_around_lowpoint(p))
+            .collect();
+        for p in next_points {
+            all_points.insert(p);
+        }
+        all_points
+    }
+
     fn is_lowpoint(&self, pos: &Position) -> bool {
         let point_height = self.0.get(pos).expect("that's off the map");
         let neighbours = pos.neighbours();
@@ -117,5 +154,23 @@ mod tests {
 9899965678";
         let map = DayNine::heightmap_from_lines(map.lines().map(|s| s.to_string()));
         assert_eq!(DayNine::score_lowpoints(&map), 15);
+    }
+
+    #[test]
+    fn it_gets_basin_sizes() {
+        let map = "2199943210
+3987894921
+9856789892
+8767896789
+9899965678";
+        let map = DayNine::heightmap_from_lines(map.lines().map(|s| s.to_string()));
+        assert_eq!(
+            map.points_around_lowpoint(&Position { x: 1, y: 0 }).len() + 1,
+            3
+        );
+        assert_eq!(
+            map.points_around_lowpoint(&Position { x: 2, y: 2 }).len() + 1,
+            14
+        );
     }
 }
