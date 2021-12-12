@@ -8,13 +8,7 @@ impl AdventDay for DayEleven {
     fn run_part_one(&self) -> String {
         let data = DayData::from_file_path("./data/day11.txt");
         let lines = data.lines();
-        let mut ocotopopulation = Cave::new();
-        for (y, line) in lines.enumerate() {
-            for (x, energy) in line.chars().enumerate() {
-                let energy = energy.to_digit(10).unwrap();
-                ocotopopulation.add_octopus(Position::new(x, y), Octopus::new(energy as usize));
-            }
-        }
+        let mut ocotopopulation = DayEleven::cave_from_lines(lines);
         for _day in 0..100 {
             ocotopopulation.run_day();
         }
@@ -23,6 +17,19 @@ impl AdventDay for DayEleven {
 
     fn run_part_two(&self) -> String {
         todo!()
+    }
+}
+
+impl DayEleven {
+    fn cave_from_lines<I: IntoIterator<Item = String>>(lines: I) -> Cave {
+        let mut ocotopopulation = Cave::new();
+        for (y, line) in lines.into_iter().enumerate() {
+            for (x, energy) in line.chars().enumerate() {
+                let energy = energy.to_digit(10).unwrap();
+                ocotopopulation.add_octopus(Position::new(x, y), Octopus::new(energy as usize));
+            }
+        }
+        ocotopopulation
     }
 }
 
@@ -56,6 +63,7 @@ impl Position {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 struct Octopus {
     energy: usize,
     has_pulsed: bool,
@@ -157,6 +165,31 @@ mod tests {
 
     #[test]
     fn it_works() {
-        assert_eq!(7, 7);
+        let start = "11111
+19991
+19191
+19991
+11111";
+        let after_step_one = "34543
+40004
+50005
+40004
+34543";
+        let after_step_two = "45654
+51115
+61116
+51115
+45654";
+        let mut cave = DayEleven::cave_from_lines(start.lines().map(|s| s.to_string()));
+        let expected_efter_step_one =
+            DayEleven::cave_from_lines(after_step_one.lines().map(|s| s.to_string()));
+        let expected_efter_step_two =
+            DayEleven::cave_from_lines(after_step_two.lines().map(|s| s.to_string()));
+
+        cave.run_day();
+        assert_eq!(cave.octopii, expected_efter_step_one.octopii);
+
+        cave.run_day();
+        assert_eq!(cave.octopii, expected_efter_step_two.octopii);
     }
 }
