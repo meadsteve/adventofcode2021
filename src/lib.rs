@@ -5,6 +5,7 @@ pub mod day_04;
 pub mod day_05;
 pub mod day_06;
 pub mod day_07;
+pub mod day_09;
 pub mod day_10;
 pub mod day_11;
 mod helpers;
@@ -21,6 +22,7 @@ use crate::day_04::DayFour;
 use crate::day_05::DayFive;
 use crate::day_06::DaySix;
 use crate::day_07::DaySeven;
+use crate::day_09::DayNine;
 use crate::day_10::DayTen;
 use crate::day_11::DayEleven;
 
@@ -76,7 +78,8 @@ pub fn run(args: &CliArgs, mut writer: impl std::io::Write) -> Result<(), Box<dy
         5 => &DayFive(),
         6 => &DaySix(),
         7 => &DaySeven(),
-        // TODO: some days I missed
+        // TODO: day 8
+        9 => &DayNine(),
         10 => &DayTen(),
         11 => &DayEleven(),
         _ => {
