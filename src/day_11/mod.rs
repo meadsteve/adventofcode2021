@@ -45,7 +45,10 @@ impl Position {
         for x in -1..=1 {
             for y in -1..=1 {
                 if x != 0 || y != 0 {
-                    positions.push(Position { x, y })
+                    positions.push(Position {
+                        x: self.x + x,
+                        y: self.y + y,
+                    })
                 }
             }
         }
