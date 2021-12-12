@@ -52,15 +52,11 @@ impl Position {
 
     fn neighbours(&self) -> Vec<Position> {
         let mut positions = Vec::new();
-        for x in -1..=1 {
-            for y in -1..=1 {
-                if x != 0 || y != 0 {
-                    positions.push(Position {
-                        x: self.x + x,
-                        y: self.y + y,
-                    })
-                }
-            }
+        for (x, y) in &[(-1, 0), (0, -1), (1, 0), (0, 1)] {
+            positions.push(Position {
+                x: self.x + x,
+                y: self.y + y,
+            })
         }
         positions
     }
@@ -100,7 +96,7 @@ impl HeightMap {
         let neighbours = pos.neighbours();
         neighbours.iter().all(|n| {
             if let Some(neighbour_height) = self.0.get(n) {
-                neighbour_height >= point_height
+                neighbour_height > point_height
             } else {
                 true
             }
